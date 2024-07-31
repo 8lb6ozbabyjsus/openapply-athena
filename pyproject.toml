@@ -7,7 +7,7 @@ homepage = "https://github.com/8lb6ozbabyjsus/openapply-athena"
 readme = "README.md"
 
 packages = [
-    { include = "jobspy", from = "src" }
+    { include = "athena", from = "src" }
 ]
 
 [tool.poetry.dependencies]
