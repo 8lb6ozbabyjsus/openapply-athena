@@ -1,4 +1,46 @@
-fastapi
-uvicorn
-pandas
-# Add other dependencies as needed
+# FastAPI framework
+fastapi==0.95.2
+
+# ASGI server
+uvicorn[standard]==0.22.0
+
+# For data manipulation
+pandas==1.5.3
+
+# For HTTP requests
+requests==2.28.1
+
+# For concurrent futures and thread pooling
+concurrent-log-handler==0.9.20
+
+# For type hints
+pydantic==1.10.8
+
+# For web scraping
+beautifulsoup4==4.11.1
+lxml==4.9.3
+
+# For logging
+loguru==0.6.0
+
+# Markdown converter
+markdownify==0.9.3
+
+# For rotating proxies
+tls-client==0.7.0
+
+# For regular expressions
+regex==2023.6.3
+
+# If you use any SQL database
+sqlalchemy==1.4.46
+
+# For environment variables
+python-dotenv==0.21.1
+
+# For better async support in requests
+httpx==0.24.0
+
+# Optional: For testing
+pytest==7.4.0
+pytest-asyncio==0.20.3
