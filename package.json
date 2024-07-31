@@ -1,0 +1,18 @@
+{
+    "name": "athena",
+    "version": "0.1.0",
+    "description": "Job scraper for LinkedIn, Indeed, Glassdoor & ZipRecruiter",
+    "main": "index.js",
+    "scripts": {
+      "start": "node index.js",
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Zachary Hampton <zachary@bunsly.com>, Cullen Watson <cullen@bunsly.com>, Dalton Walker <dalton.walker@openapply.ai>, Trevor Garrett <trevor.garrett@openapply.ai>",
+    "license": "ISC",
+    "homepage": "https://github.com/8lb6ozbabyjsus/openapply-athena",
+    "dependencies": {},
+    "devDependencies": {
+      "nodemon": "^2.0.4"
+    }
+  }
+  

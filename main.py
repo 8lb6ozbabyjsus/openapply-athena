@@ -1,25 +1,28 @@
-from fastapi import FastAPI, Query
-from src.athena import scrape_jobs
-from pydantic import BaseModel
-from typing import List
+from fastapi import FastAPI
+from dotenv import load_dotenv
+import os
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
+load_dotenv()
 
 app = FastAPI()
 
-class JobSearchParams(BaseModel):
-    site_name: List[str] = Query(None)
-    search_term: str = None
-    location: str = None
-    # Add other parameters as needed
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-@app.get("/api/jobs")
-def get_jobs(params: JobSearchParams):
-    jobs_df = scrape_jobs(
-        site_name=params.site_name,
-        search_term=params.search_term,
-        location=params.location,
-        # Pass other parameters
-    )
-    return jobs_df.to_dict(orient='records')
+def get_db_connection():
+    conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+    return conn
+
+@app.get("/jobs")
+def read_jobs():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM jobs")
+    jobs = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return jobs
 
 if __name__ == '__main__':
     import uvicorn

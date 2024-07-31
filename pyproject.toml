@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "athena"
-version = "1.1.61"
+version = "0.1.00"
 description = "Job scraper for LinkedIn, Indeed, Glassdoor & ZipRecruiter"
 authors = ["Zachary Hampton <zachary@bunsly.com>", "Cullen Watson <cullen@bunsly.com>", "Dalton Walker <dalton.walker@openapply.ai>", "Trevor Garrett <trevor.garrett@openapply.ai>"]
 homepage = "https://github.com/8lb6ozbabyjsus/openapply-athena"
