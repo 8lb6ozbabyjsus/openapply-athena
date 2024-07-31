@@ -1,0 +1,4 @@
+fastapi
+uvicorn
+pandas
+# Add other dependencies as needed
