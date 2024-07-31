@@ -12,7 +12,7 @@ from requests.adapters import HTTPAdapter, Retry
 
 from ..jobs import CompensationInterval, JobType
 
-logger = logging.getLogger("JobSpy")
+logger = logging.getLogger("Athena")
 logger.propagate = False
 if not logger.handlers:
     logger.setLevel(logging.INFO)
