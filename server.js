@@ -20,3 +20,8 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+app.get('/api', (req, res) => {
+  const data = Array.from({ length: 50 }, (_, i) => `Item ${i + 1}`); // Example data
+  res.json({ data });
+});
