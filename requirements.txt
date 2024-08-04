@@ -25,7 +25,7 @@ h11==0.13.0
     # via unvicorn
 httpcore==0.13.6
     # via unvicorn
-httpx==0.22.0
+httpx>0.22.0
     # via unvicorn
 
 idna==3.7
