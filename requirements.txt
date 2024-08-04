@@ -20,8 +20,6 @@ click==8.0.3
     # via pydantic
     # via pydantic-core
 colorama==0.4.4
-
-fastapi==0.73.0
  
 h11==0.13.0
     # via unvicorn
