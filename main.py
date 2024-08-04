@@ -1,29 +1,21 @@
 from fastapi import FastAPI
-from dotenv import load_dotenv
-import os
-import psycopg2
-from psycopg2.extras import RealDictCursor
-
-load_dotenv()
+from fastapi.responses import JSONResponse
+from pathlib import Path
 
 app = FastAPI()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+def get_directory_structure(rootdir):
+    rootdir = Path(rootdir)
+    dir_structure = []
+    for path in sorted(rootdir.rglob('*')):
+        dir_structure.append(str(path))
+    return dir_structure
 
-def get_db_connection():
-    conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
-    return conn
-
-@app.get("/jobs")
-def read_jobs():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM jobs")
-    jobs = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return jobs
+@app.get("/files")
+def read_files():
+    files = get_directory_structure(".")
+    return JSONResponse(content=files)
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=5001)

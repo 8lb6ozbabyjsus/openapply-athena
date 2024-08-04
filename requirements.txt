@@ -14,6 +14,22 @@ certifi==2024.7.4
     # via requests
 charset-normalizer==3.3.2
     # via requests
+click==8.0.3
+    # via black
+    # via pre-commit
+    # via pydantic
+    # via pydantic-core
+colorama==0.4.4
+
+fastapi==0.73.0
+ 
+h11==0.13.0
+    # via unvicorn
+httpcore==0.13.6
+    # via unvicorn
+httpx==0.22.0
+    # via unvicorn
+
 idna==3.7
     # via requests
 markdownify==0.11.6
@@ -42,6 +58,8 @@ six==1.16.0
     #   python-dateutil
 soupsieve==2.5
     # via beautifulsoup4
+unvicorn==0.15.0
+    # via athena (pyproject.toml)
 tls-client==1.0.1
     # via athena (pyproject.toml)
 typing-extensions==4.12.2
