@@ -1,5 +1,5 @@
 """
-jobspy.scrapers.indeed
+athena.scrapers.indeed
 ~~~~~~~~~~~~~~~~~~~
 
 This module contains routines to scrape Indeed.

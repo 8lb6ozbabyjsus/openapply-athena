@@ -1,5 +1,5 @@
 """
-jobspy.scrapers.glassdoor
+athena.scrapers.glassdoor
 ~~~~~~~~~~~~~~~~~~~
 
 This module contains routines to scrape Glassdoor.

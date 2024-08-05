@@ -1,5 +1,5 @@
 """
-jobspy.scrapers.linkedin
+athena.scrapers.linkedin
 ~~~~~~~~~~~~~~~~~~~
 
 This module contains routines to scrape LinkedIn.
