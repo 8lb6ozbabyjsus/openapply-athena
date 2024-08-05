@@ -15,3 +15,6 @@ env/
 
 # Python
 __pycache__/
+
+# Data
+jobs.json

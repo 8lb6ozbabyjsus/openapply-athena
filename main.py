@@ -4,8 +4,13 @@ from pathlib import Path
 from fastapi.middleware.cors import CORSMiddleware
 import json
 from apscheduler.schedulers.background import BackgroundScheduler
-from .athena import scrape_jobs, export_jobs_to_json
+from src.athena import scrape_jobs, export_jobs_to_json  # Adjusted to absolute import
 import uvicorn
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -21,6 +26,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+MAX_FILE_SIZE_MB = 1024  # Set maximum file size to 1GB
 
 def generate_jobs_json(
     site_name=None,
@@ -41,38 +48,70 @@ def generate_jobs_json(
     verbose=2,
     proxies=None,
 ):
-    # Call your scraping function with provided parameters
-    df = scrape_jobs(
-        site_name=site_name,
-        search_term=search_term,
-        location=location,
-        distance=distance,
-        is_remote=is_remote,
-        job_type=job_type,
-        easy_apply=easy_apply,
-        results_wanted=results_wanted,
-        country_indeed=country_indeed,
-        description_format=description_format,
-        linkedin_fetch_description=linkedin_fetch_description,
-        linkedin_company_ids=linkedin_company_ids,
-        offset=offset,
-        hours_old=hours_old,
-        enforce_annual_salary=enforce_annual_salary,
-        verbose=verbose,
-        proxies=proxies,
-    )
-    jobs = df.to_dict(orient='records')
-    
-    # Write to jobs.json
-    with open("jobs.json", "w") as f:
-        json.dump(jobs, f, indent=4)
-    print("jobs.json file created")
+    logger.info("Starting job scraping...")
+    try:
+        jobs = []
+        total_size_mb = 0
+        
+        # Scrape jobs in chunks to monitor size
+        while total_size_mb < MAX_FILE_SIZE_MB:
+            df = scrape_jobs(
+                site_name=site_name,
+                search_term=search_term,
+                location=location,
+                distance=distance,
+                is_remote=is_remote,
+                job_type=job_type,
+                easy_apply=easy_apply,
+                results_wanted=results_wanted,
+                country_indeed=country_indeed,
+                description_format=description_format,
+                linkedin_fetch_description=linkedin_fetch_description,
+                linkedin_company_ids=linkedin_company_ids,
+                offset=offset,
+                hours_old=hours_old,
+                enforce_annual_salary=enforce_annual_salary,
+                verbose=verbose,
+                proxies=proxies,
+            )
+            
+            new_jobs = df.to_dict(orient='records')
+            new_jobs_json_str = json.dumps(new_jobs, indent=4)
+            new_jobs_size_mb = len(new_jobs_json_str.encode('utf-8')) / (1024 * 1024)
+            
+            if total_size_mb + new_jobs_size_mb > MAX_FILE_SIZE_MB:
+                logger.info("Reached maximum file size limit. Stopping scraping.")
+                break
+            
+            jobs.extend(new_jobs)
+            total_size_mb += new_jobs_size_mb
+            
+            # Increment offset to avoid scraping the same jobs
+            offset += results_wanted
+            
+        # Write to jobs.json
+        with open("jobs.json", "w") as f:
+            json.dump(jobs, f, indent=4)
+        logger.info("jobs.json file created successfully.")
+        
+        # Commented truncation code for future use
+        # if total_size_mb > MAX_FILE_SIZE_MB:
+        #     logger.warning(f"Scraped data exceeds {MAX_FILE_SIZE_MB}MB. Truncating data.")
+        #     # Optionally, you can truncate the jobs list
+        #     while total_size_mb > MAX_FILE_SIZE_MB:
+        #         jobs.pop()
+        #         jobs_json_str = json.dumps(jobs, indent=4)
+        #         total_size_mb = len(jobs_json_str.encode('utf-8')) / (1024 * 1024)
+        
+    except Exception as e:
+        logger.error(f"Error occurred during job scraping: {e}")
 
 @app.on_event("startup")
 def startup_event():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(generate_jobs_json, "interval", hours=1)
+    scheduler.add_job(generate_jobs_json, "interval", hours=24)
     scheduler.start()
+    logger.info("Scheduler started with interval job for generate_jobs_json.")
 
 @app.get("/jobs")
 def read_jobs(
@@ -108,4 +147,5 @@ def read_jobs(
     return JSONResponse(content=filtered_jobs, status_code=200)
 
 if __name__ == '__main__':
+    logger.info("Starting FastAPI app...")
     uvicorn.run(app, host="0.0.0.0", port=8000)

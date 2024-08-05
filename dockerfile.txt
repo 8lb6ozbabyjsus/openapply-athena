@@ -1,0 +1,37 @@
+#This is used for a fullstack docker image may be used in the future.
+
+# Use the official Node.js image for the frontend build stage
+FROM node:14 AS frontend-build
+
+# Set the working directory
+WORKDIR /app/client
+
+# Copy the client directory contents into the container
+COPY client/ .
+
+# Install dependencies and build the frontend
+RUN yarn install
+RUN yarn build
+
+# Use the official Python image for the backend
+FROM python:3.12-slim
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the requirements file and install dependencies
+COPY pyproject.toml poetry.lock ./
+RUN pip install poetry
+RUN poetry install --no-dev
+
+# Copy the backend and built frontend files
+COPY src/ src/
+COPY main.py .
+COPY --from=frontend-build /app/client/build/ /app/client/build/
+
+# Set environment variable for the Python path to include the src directory
+ENV PYTHONPATH="/app/src"
+
+# Expose the port and run the application
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
